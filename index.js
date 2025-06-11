@@ -55,7 +55,7 @@ client.on('messageCreate', async message => {
                 getItems = 'ㅋㅋ 3일동안 하나도 먹은게 없네';
             }
 
-            let ratio = Number(characterInfo.data.getItemRatio['태초']) / Number(characterInfo.data.getItemRatio['에픽']);
+            let ratio = Number(characterInfo.data.getItemRatio.ancient) / Number(characterInfo.data.getItemRatio.epic);
 
             const embed = new EmbedBuilder()
                 .setTitle(`${name}님 캐릭터 정보`)
@@ -138,7 +138,7 @@ async function getCharacter (name, server){
 
         const getItem = await axios.get(`https://dungpt.kr/dnf/filtered-items?characterName=${name}&server=${server}`);
         
-        const getItemRatio = await axios.get(` https://dungpt.kr/dnf/user/query2?characterId=${characterInfoRes.data.id}&serverId=${server}`);
+        const getItemRatio = await axios.get(` https://dungpt.kr/dnf/user/query4?characterId=${characterInfoRes.data.id}&serverId=${server}`);
 
         if(character.buffScore){
             characterInfoRes.data.buff = [character.buffScore, character.buffScore3, character.buffScore4];
@@ -146,7 +146,15 @@ async function getCharacter (name, server){
             characterInfoRes.data.totalDamage = character.ozma;
         }
         characterInfoRes.data.getItemList = filterDate(getItem.data);
-        characterInfoRes.data.getItemRatio = getItemRatio.data[0];
+
+        characterInfoRes.data.getItemRatio = { ancient: 0, epic: 0 };
+
+        for (let i = 0; i < getItemRatio.data.length; i++) {
+            characterInfoRes.data.getItemRatio.ancient = getItemRatio.data[i].ancient_count + characterInfoRes.data.getItemRatio.ancient;
+            characterInfoRes.data.getItemRatio.epic = getItemRatio.data[i].epic_count + characterInfoRes.data.getItemRatio.epic;
+        }
+
+        console.log(characterInfoRes);
 
         return characterInfoRes;
     } catch (error) {
