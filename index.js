@@ -59,11 +59,29 @@ client.on('messageCreate', async message => {
                 .setTitle(`${name}님 캐릭터 정보`)
                 .setImage(`https://img-api.neople.co.kr/df/servers/${server}/characters/${characterInfo.data.id}?zoom=1`)
                 .addFields([
-                    { name: "데미지", value: String(characterInfo.data.totalDamage), inline: true },
+                    { 
+                        name: characterInfo.data.buff !== undefined 
+                            ? "버프력" 
+                            : "데미지", 
+                        value: characterInfo.data.buff !== undefined 
+                            ? characterInfo.data.buff[1] !== undefined && characterInfo.data.buff[2] !== undefined
+                                ? `2인 ${String(characterInfo.data.buff[0])}\n 3인 ${String(characterInfo.data.buff[1])}\n 4인 ${String(characterInfo.data.buff[2])}`
+                                : String(characterInfo.data.buff[0])
+                            : String(characterInfo.data.totalDamage), 
+                        inline: true 
+                    },
                     { name: "", value: "" },
-                    { name: "장착중인 세트 정보", value: String(characterInfo.data.setsName + " " + characterInfo.data.setsGrade + " " + characterInfo.data.setsPoint || '정보 없음'), inline: true },
+                    { 
+                        name: "장착중인 세트 정보", 
+                        value: String(characterInfo.data.setsName + " " + characterInfo.data.setsGrade + " " + characterInfo.data.setsPoint || '정보 없음'), 
+                        inline: true 
+                    },
                     { name: "", value: "" },
-                    { name: "어제 오늘 아이템 획득 현황", value: getItems, inline: true },
+                    { 
+                        name: "어제 오늘 아이템 획득 현황", 
+                        value: getItems, 
+                        inline: true 
+                    },
                 ])
                 .setColor("Purple");
 
@@ -87,8 +105,14 @@ async function getCharacter (name, server){
 
         const getItem = await axios.get(`https://dungpt.kr/dnf/filtered-items?characterName=${name}&server=${server}`);
 
-        characterInfoRes.data.totalDamage = character.ozma;
+        if(character.buffScore){
+            characterInfoRes.data.buff = [character.buffScore, character.buffScore3, character.buffScore4];
+        }else{
+            characterInfoRes.data.totalDamage = character.ozma;
+        }
         characterInfoRes.data.getItemList = filterDate(getItem.data);
+
+        console.log(character);
 
         return characterInfoRes;
     } catch (error) {
