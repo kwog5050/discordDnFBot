@@ -101,7 +101,7 @@ client.on('messageCreate', async message => {
                         .setStyle(ButtonStyle.Link)
                         .setURL(`https://dfgear.xyz/character?sId=${server}&cId=${characterInfo.data.id}&cName=${name}`),
                     new ButtonBuilder()
-                        .setLabel('던지피지')
+                        .setLabel('던지피티')
                         .setStyle(ButtonStyle.Link)
                         .setURL(`https://dungpt.kr/character-info?name=${name}&server=${server}`)
                 );
