@@ -24,7 +24,7 @@ client.on('messageCreate', async message => {
     if (message.author.bot) return;
     if (!message.content.startsWith(prefix)) return;
 
-    // if (message.channel.name !== "검은사막") {
+    // if (message.channel.name !== "") {
     //     message.channel.send("여기서 부르지 마세요");
     //     return;
     // }
