@@ -122,7 +122,43 @@ client.on('messageCreate', async message => {
             message.channel.send('니 얼굴 에러');
         }
     }else if(regexArr[2].test(content)){
-        message.channel.send('니 얼굴 아직임');
+        try {
+            const textArr = content.trim().split(/\s+/);
+
+            const name = textArr.slice(1).join(" ");
+            const advenRes = await getAdven(name);
+            
+            let advenList = '';
+            advenList = advenRes.data.characters
+                .map(item => `${item.name} (${item.buffScore !== undefined ? item.buffScore : item.ozma})\n`)
+                .join('\n');
+    
+    
+            const embed = new EmbedBuilder()
+            .setTitle(`${name}님 모험단 캐릭터리스트`)
+            .addFields([
+                { 
+                    name: " ", 
+                    value: String(advenList), 
+                    inline: true 
+                },
+            ])
+            .setColor("Purple");
+
+            const row = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setLabel('던담')
+                    .setStyle(ButtonStyle.Link)
+                    .setURL(`https://dundam.xyz/search?server=adven&name=${name}`)
+            );
+    
+            message.channel.send({
+                embeds: [embed],
+                components: [row],
+            });
+        } catch (error) {
+            message.channel.send('니 얼굴 에러');
+        }
     }else{
         message.channel.send('니 얼굴');
     }
@@ -153,8 +189,6 @@ async function getCharacter (name, server){
             characterInfoRes.data.getItemRatio.ancient = getItemRatio.data[i].ancient_count + characterInfoRes.data.getItemRatio.ancient;
             characterInfoRes.data.getItemRatio.epic = getItemRatio.data[i].epic_count + characterInfoRes.data.getItemRatio.epic;
         }
-
-        console.log(characterInfoRes);
 
         return characterInfoRes;
     } catch (error) {
