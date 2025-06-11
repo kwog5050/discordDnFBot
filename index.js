@@ -133,7 +133,6 @@ client.on('messageCreate', async message => {
                 .map(item => `${item.name} (${item.buffScore !== undefined ? item.buffScore : item.ozma})\n`)
                 .join('\n');
     
-    
             const embed = new EmbedBuilder()
             .setTitle(`${name}님 모험단 캐릭터리스트`)
             .addFields([
