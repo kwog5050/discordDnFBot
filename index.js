@@ -55,6 +55,8 @@ client.on('messageCreate', async message => {
                 getItems = 'ㅋㅋ 3일동안 하나도 먹은게 없네';
             }
 
+            let ratio = Number(characterInfo.data.getItemRatio['태초']) / Number(characterInfo.data.getItemRatio['에픽']);
+
             const embed = new EmbedBuilder()
                 .setTitle(`${name}님 캐릭터 정보`)
                 .setImage(`https://img-api.neople.co.kr/df/servers/${server}/characters/${characterInfo.data.id}?zoom=1`)
@@ -80,6 +82,12 @@ client.on('messageCreate', async message => {
                     { 
                         name: "장착중인 세트 정보", 
                         value: String(characterInfo.data.setsName + " " + characterInfo.data.setsGrade + " " + characterInfo.data.setsPoint || '정보 없음'), 
+                        inline: true 
+                    },
+                    { name: "", value: "" },
+                    { 
+                        name: "태초 비율", 
+                        value: String(ratio), 
                         inline: true 
                     },
                     { name: "", value: "" },
@@ -129,6 +137,8 @@ async function getCharacter (name, server){
         const characterInfoRes = await axios.get(`https://dundam.xyz/dat/viewData.jsp?image=${character.key}&server=${server}&`);
 
         const getItem = await axios.get(`https://dungpt.kr/dnf/filtered-items?characterName=${name}&server=${server}`);
+        
+        const getItemRatio = await axios.get(` https://dungpt.kr/dnf/user/query2?characterId=${characterInfoRes.data.id}&serverId=${server}`);
 
         if(character.buffScore){
             characterInfoRes.data.buff = [character.buffScore, character.buffScore3, character.buffScore4];
@@ -136,6 +146,9 @@ async function getCharacter (name, server){
             characterInfoRes.data.totalDamage = character.ozma;
         }
         characterInfoRes.data.getItemList = filterDate(getItem.data);
+        characterInfoRes.data.getItemRatio = getItemRatio.data[0];
+
+        console.log(getItemRatio.data);
 
         return characterInfoRes;
     } catch (error) {
