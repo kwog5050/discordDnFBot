@@ -86,8 +86,8 @@ client.on('messageCreate', async message => {
                     },
                     { name: "", value: "" },
                     { 
-                        name: "태초 비율", 
-                        value: String(ratio), 
+                        name: "태초 비율 (캐릭터 드랍만 계산함)", 
+                        value: String(ratio.toFixed(3)), 
                         inline: true 
                     },
                     { name: "", value: "" },
@@ -147,8 +147,6 @@ async function getCharacter (name, server){
         }
         characterInfoRes.data.getItemList = filterDate(getItem.data);
         characterInfoRes.data.getItemRatio = getItemRatio.data[0];
-
-        console.log(getItemRatio.data);
 
         return characterInfoRes;
     } catch (error) {
