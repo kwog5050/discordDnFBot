@@ -1,4 +1,3 @@
-
 // 최근 3일 필터
 function filterDate(items) {
     const now = new Date();
