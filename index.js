@@ -86,7 +86,7 @@ client.on('messageCreate', async message => {
                     },
                     { name: "", value: "" },
                     { 
-                        name: "태초 비율 (캐릭터 드랍만 계산함)", 
+                        name: "태초 비율 (현재 캐릭만 계산됨)", 
                         value: String(ratio.toFixed(3)), 
                         inline: true 
                     },
