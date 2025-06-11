@@ -36,7 +36,7 @@ client.on('messageCreate', async message => {
 
     if (regexArr[0].test(content)) {
         message.channel.send(`
-            **사용방법** \n${box}!캐릭터 서버 캐릭터명\n !모험단 모험단명${box}
+            **사용방법** \n${box}!캐릭터 서버 캐릭터명\n!모험단 모험단명${box}
         `);
     } else if (regexArr[1].test(content)) {
         try {
@@ -129,9 +129,13 @@ client.on('messageCreate', async message => {
             const advenRes = await getAdven(name);
             
             let advenList = '';
-            advenList = advenRes.data.characters
-                .map(item => `${item.name} (${item.buffScore !== undefined ? item.buffScore : item.ozma})\n`)
-                .join('\n');
+            if(advenRes.data.characters.length){
+                advenList = advenRes.data.characters
+                    .map(item => `${item.name} (${item.buffScore !== undefined ? item.buffScore : item.ozma})\n`)
+                    .join('\n');
+            }else{
+                advenList = '캐릭터 없음';
+            }
     
             const embed = new EmbedBuilder()
             .setTitle(`${name}님 모험단 캐릭터리스트`)
