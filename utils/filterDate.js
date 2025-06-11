@@ -1,24 +1,30 @@
 
-// 오늘 어제만 데이터 필터
+// 최근 3일 필터
 function filterDate(items) {
     const now = new Date();
 
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    const todayStr = `${yyyy}-${mm}-${dd}`;
+    const getDateStr = (dateObj) => {
+        const yyyy = dateObj.getFullYear();
+        const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const dd = String(dateObj.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const todayStr = getDateStr(now);
 
     const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yyyyy = yesterday.getFullYear();
-    const ymm = String(yesterday.getMonth() + 1).padStart(2, '0');
-    const ydd = String(yesterday.getDate()).padStart(2, '0');
-    const yesterdayStr = `${yyyyy}-${ymm}-${ydd}`;
+    yesterday.setDate(now.getDate() - 1);
+    const yesterdayStr = getDateStr(yesterday);
+
+    const twoDaysAgo = new Date(now);
+    twoDaysAgo.setDate(now.getDate() - 2);
+    const twoDaysAgoStr = getDateStr(twoDaysAgo);
 
     return items.filter(item => {
         const itemDateStr = item.date.split(' ')[0];
-        return itemDateStr === todayStr || itemDateStr === yesterdayStr;
+        return itemDateStr === todayStr || itemDateStr === yesterdayStr || itemDateStr === twoDaysAgoStr;
     });
 }
+
 
 module.exports = { filterDate };

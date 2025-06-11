@@ -2,7 +2,7 @@ require('dotenv').config();
 const keepAlive = require("./server.js");
 const axios = require("axios");
 const cheerio = require("cheerio");
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const { serverFormat } = require('./utils/serverFormat.js');
 const { filterDate } = require('./utils/filterDate.js');
 
@@ -31,12 +31,12 @@ client.on('messageCreate', async message => {
 
     const content = message.content;
     const num = content.match(/\b\d+(\.\d+)?\b/g);
-    const regexArr = [/.*사용법.*/, /.*캐릭터.*/];
+    const regexArr = [/.*사용법.*/, /.*캐릭터.*/, /.*모험단.*/];
     const box = "```";
 
     if (regexArr[0].test(content)) {
         message.channel.send(`
-            ${box}!캐릭터 서버 캐릭터명${box}
+            **사용방법** \n${box}!캐릭터 서버 캐릭터명\n !모험단 모험단명${box}
         `);
     } else if (regexArr[1].test(content)) {
         try {
@@ -49,16 +49,22 @@ client.on('messageCreate', async message => {
             let getItems = '';
             if(characterInfo.data.getItemList.length){
                 getItems = characterInfo.data.getItemList
-                    .map(item => `${item.date} ${item.data.itemName}`)
+                    .map(item => `${item.date} ${item.data.itemName} (${item.data.itemRarity})`)
                     .join('\n');
             }else{
-                getItems = 'ㅋㅋ 어제 오늘 하나도 먹은게 없네';
+                getItems = 'ㅋㅋ 3일동안 하나도 먹은게 없네';
             }
 
             const embed = new EmbedBuilder()
                 .setTitle(`${name}님 캐릭터 정보`)
                 .setImage(`https://img-api.neople.co.kr/df/servers/${server}/characters/${characterInfo.data.id}?zoom=1`)
                 .addFields([
+                    { 
+                        name: `모험단 ${characterInfo.data.adventure}`, 
+                        value: "", 
+                        inline: true 
+                    },
+                    { name: "", value: "" },
                     { 
                         name: characterInfo.data.buff !== undefined 
                             ? "버프력" 
@@ -78,17 +84,37 @@ client.on('messageCreate', async message => {
                     },
                     { name: "", value: "" },
                     { 
-                        name: "어제 오늘 아이템 획득 현황", 
+                        name: "최근 3일 아이템 획득 현황", 
                         value: getItems, 
                         inline: true 
                     },
                 ])
                 .setColor("Purple");
 
-            message.channel.send({ embeds: [embed] });
+                const row = new ActionRowBuilder().addComponents(
+                    new ButtonBuilder()
+                        .setLabel('던담')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL(`https://dundam.xyz/character?server=${server}&key=${characterInfo.data.id}`),
+                    new ButtonBuilder()
+                        .setLabel('던파기어')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL(`https://dfgear.xyz/character?sId=${server}&cId=${characterInfo.data.id}&cName=${name}`),
+                    new ButtonBuilder()
+                        .setLabel('던지피지')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL(`https://dungpt.kr/character-info?name=${name}&server=${server}`)
+                );
+
+                message.channel.send({
+                    embeds: [embed],
+                    components: [row],
+                });
         } catch (error) {
             message.channel.send('니 얼굴 에러');
         }
+    }else if(regexArr[2].test(content)){
+        message.channel.send('니 얼굴 아직임');
     }else{
         message.channel.send('니 얼굴');
     }
@@ -97,8 +123,7 @@ client.on('messageCreate', async message => {
 // 캐릭터 정보
 async function getCharacter (name, server){
     try {
-        const targetUrl = `https://dundam.xyz/dat/searchData.jsp?name=${encodeURIComponent(name)}&server=${server}`;
-        const characterRes = await axios.post(targetUrl, {});
+        const characterRes = await axios.post(`https://dundam.xyz/dat/searchData.jsp?name=${encodeURIComponent(name)}&server=${server}`, {});
         const character = characterRes.data.characters.find(c => c.name === name);
 
         const characterInfoRes = await axios.get(`https://dundam.xyz/dat/viewData.jsp?image=${character.key}&server=${server}&`);
@@ -112,11 +137,20 @@ async function getCharacter (name, server){
         }
         characterInfoRes.data.getItemList = filterDate(getItem.data);
 
-        console.log(character);
-
         return characterInfoRes;
     } catch (error) {
         console.error("캐릭터 정보 조회 실패:", error);
+    }
+};
+
+// 모험단 정보
+async function getAdven (name){
+    try {
+        const advenRes = await axios.post(`https://dundam.xyz/dat/searchData.jsp?name=${encodeURIComponent(name)}&server=adven`, {});
+
+        return advenRes;
+    } catch (error) {
+        console.error("모험단 정보 조회 실패:", error);
     }
 };
 
