@@ -23,6 +23,24 @@ client.once("ready", () => {
 
 client.on('messageCreate', async message => {
     if (message.author.bot) return;
+
+    console.log(message.author.id);
+    console.log(message.author.username);
+
+    // if('pooyo_' === message.author.username){
+    //     const textArr = [
+    //         '혹시 나이가..',
+    //         '헉 내일도 출근하시나요?',
+    //         '흠... 트...ㄹ',
+    //         '진짜 기린이네요',
+    //         '맨날 일한다',
+    //         '혹시 이재명 지지하시나요?',
+    //         '제가 지켜보고있습니다'
+    //     ]
+        
+    //     message.channel.send(textArr[Math.floor(Math.random() * textArr.length)]);
+    // }
+
     if (!message.content.startsWith(prefix)) return;
 
     // if (message.channel.name !== "") {
