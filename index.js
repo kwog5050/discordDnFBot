@@ -5,6 +5,7 @@ const cheerio = require("cheerio");
 const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const { serverFormat } = require('./utils/serverFormat.js');
 const { filterDate } = require('./utils/filterDate.js');
+const { getRandomChannel } = require('./utils/randomChannel.js');
 
 const client = new Client({
     intents: [
@@ -31,12 +32,12 @@ client.on('messageCreate', async message => {
 
     const content = message.content;
     const num = content.match(/\b\d+(\.\d+)?\b/g);
-    const regexArr = [/.*사용법.*/, /.*캐릭터.*/, /.*모험단.*/];
+    const regexArr = [/.*사용법.*/, /.*캐릭터.*/, /.*모험단.*/,/.*채널추천.*/];
     const box = "```";
 
     if (regexArr[0].test(content)) {
         message.channel.send(`
-            **사용방법** \n${box}!캐릭터 서버 캐릭터명\n!모험단 모험단명${box}
+            **사용방법** \n${box}!캐릭터 서버 캐릭터명\n!모험단 모험단명\n!채널추천${box}
         `);
     } else if (regexArr[1].test(content)) {
         try {
@@ -162,6 +163,46 @@ client.on('messageCreate', async message => {
         } catch (error) {
             message.channel.send('니 얼굴 에러');
         }
+    }else if(regexArr[3].test(content)){
+        const radomChannel = getRandomChannel();
+        let text = '';
+        let image = '';
+        let imageRandom01 = [
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749711174/%EC%A0%91%EC%96%B4_yyksys.png',
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749710821/%EC%B0%BE%EC%95%98%EB%8B%A4_ivdkub.webp',
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749711037/%ED%8A%B9%EA%B2%80_aqsesz.png',
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749714869/%EA%B9%A1_okwkm2.png',
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749717062/%ED%91%9C%EB%8F%85_nhj0je.png',
+        ];
+        let imageRandom02 = [
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749714879/%EB%B8%9C%ED%9E%88%ED%9E%88_nrsnj3.png',
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749714865/%EC%97%86%EB%83%90_u1ngqi.png',
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749714853/%EB%B6%88%ED%96%89_afctdo.png',
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749717062/%ED%9D%A1%EC%A1%B1_zft0mu.png',
+            'https://res.cloudinary.com/dfeglkqjy/image/upload/v1749717062/%EC%9C%BC%ED%9E%88%ED%9E%88_mhcbar.png'
+        ];
+        
+        if(radomChannel.name === '꽝'){
+            text = '오늘 태초가 안뜸 ㅋㅋㅋㅋ';
+            image = imageRandom02[Math.floor(Math.random() * imageRandom02.length)]
+        }else{
+            text = `${radomChannel.name} ${radomChannel.channel}채널`
+            image = imageRandom01[Math.floor(Math.random() * imageRandom01.length)]
+        }
+
+        const embed = new EmbedBuilder()
+            .setTitle(`당신의 태초 채널!`)
+            .setImage(image)
+            .addFields([
+                { 
+                    name: text, 
+                    value: '', 
+                    inline: true 
+                },
+            ])
+            .setColor("Purple");
+
+            message.channel.send({ embeds: [embed], });
     }else{
         message.channel.send('니 얼굴');
     }
