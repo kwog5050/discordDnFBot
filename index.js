@@ -27,6 +27,7 @@ client.on('messageCreate', async message => {
     console.log(message.author.id);
     console.log(message.author.username);
 
+    // 뿌요형 놀리기용
     // if('pooyo_' === message.author.username){
     //     const textArr = [
     //         '혹시 나이가..',
