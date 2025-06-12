@@ -28,19 +28,35 @@ client.on('messageCreate', async message => {
     console.log(message.author.username);
 
     // 뿌요형 놀리기용
-    // if('pooyo_' === message.author.username){
-    //     const textArr = [
-    //         '혹시 나이가..',
-    //         '헉 내일도 출근하시나요?',
-    //         '흠... 트...ㄹ',
-    //         '진짜 기린이네요',
-    //         '맨날 일한다',
-    //         '혹시 이재명 지지하시나요?',
-    //         '제가 지켜보고있습니다'
-    //     ]
+    if('pooyo_' === message.author.username){
+        function getFormattedTimePlus6Hours() {
+            const now = new Date();
+            now.setHours(now.getHours() + 6);
         
-    //     message.channel.send(textArr[Math.floor(Math.random() * textArr.length)]);
-    // }
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+        
+            return `${hours}시 ${minutes}분`;
+        }
+
+        const textArr = [
+            '혹시 나이가..',
+            '헉 내일도 출근하시나요?',
+            '흠... 트...ㄹ',
+            '진짜 기린이네요',
+            '맨날 일한다',
+            '혹시 이재명 지지하시나요?',
+            '제가 지켜보고있습니다'
+        ]
+
+        if(message.content === "몇시야"){
+            message.channel.send(`뿌요님 기준 ${getFormattedTimePlus6Hours()}입니다`);
+        }
+        // else{
+        //     message.channel.send(textArr[Math.floor(Math.random() * textArr.length)]);
+        // }
+        
+    }
 
     if (!message.content.startsWith(prefix)) return;
 
